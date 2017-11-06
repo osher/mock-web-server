@@ -1,4 +1,4 @@
-# mock-web-server
+# mock-web-server [![Build Status](https://secure.travis-ci.org/osher/mock-web-server.png?branch=master)](http://travis-ci.org/osher/mock-web-server)
 A lightweight simple helper utility to mock web-servers
 
 ## Synopsis

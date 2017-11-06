@@ -1,3 +1,4 @@
+'use strict';
 const request = require('request');
 const asyn = require('async');
 const sut = require('../');
