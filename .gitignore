@@ -1,0 +1,37 @@
+#Generated files
+coverage
+*.js.map
+apps/monitor/web/monitorResults.json
+
+#pacakge manager folder
+node_modules
+
+#OS
+.DS_Store
+.Trashes
+thumbs.db
+
+#IDE & Workspace files
+.idea
+.jshintrc
+.settings
+yarn.lock
+*.iml
+build/Release
+.lock-wscript
+*_local.js*
+*_override.js*
+
+#Runtime & Tmp files
+logs
+pids
+tmp
+tmp*
+*.tmp
+*.log
+*.wmlog
+*.pid
+*.seed
+.lock-wscript
+dump.rdb
+erl_crash.dump
