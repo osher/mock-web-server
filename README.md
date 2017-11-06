@@ -26,7 +26,7 @@ and easily manipulate the response it emits.
 ## Example
 This example uses mocha, however - it can be used with every test runner for node.
 
-```
+```javascript
 const mockSvrFactory = require('mock-web-server');
 const sut = require('../lib/my-web-client');
 const Should = require('should');
