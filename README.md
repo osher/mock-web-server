@@ -23,6 +23,109 @@ The good part - is that you run it in-process to your test suite,
 and therefore can inspect progrmatically what requests it received (and perform asserts against them)
 and easily manipulate the response it emits.
 
+## Example
+This example uses mocha, however - it can be used with every test runner for node.
+
+```
+const mockSvrFactory = require('mock-web-server');
+const sut = require('../lib/my-web-client');
+const Should = require('should');
+const request = require('request');
+
+describe('lib/my-web-client', () => {
+  let client;
+  before(() => client = sut({baseUrl: "http://localhost:3030"}));
+
+  it('should be a module object',
+    () => Should(sut).be.an.Object()
+  );
+  it('should have .get API', () => {
+    () => Should(sut).have.properties(['get'])
+  });
+  
+  describe('when calling .get(id) with a valid id', () =>  {
+    let svr = mockSvrFactory({
+      status: 200,
+      headers: { 'content-type' : 'application/json' },
+      body: { 
+        status: 'OK', 
+        data: {
+          entity: { id: 333, note: 'it is what it is' }
+        }
+      }
+    });
+    before((done) => svr.listen(3030, done));
+    after(() => svr.close());
+    
+    
+    describe('and the server responds with valid response', () => {
+      let foundErr, foundRes;
+      beforeAll(() => {
+        svr.reset()
+        return client.get(333)
+          .then(entity => foundRes = entity)
+          .catch(err => foundErr = err)
+      });
+      
+      it('should send content type header (app/json)', () =>  {
+        Should(svr.accepted[0])
+          .have.property('headers')
+          .have.property('content-type', 'application/json')
+      });
+  
+      it('should hit the correct URL', () =>  {
+        Should(svr.accepted[0])
+          .have.properties({
+            method: 'GET',
+            url: 'http://localhost:3030/entity/333'
+          })
+      });
+      
+      it('should resolve to the entity, unwrapped from protocol envelopes', () => {
+        Should(foundRes).eql({ id: 333, note: 'it is what it is' })
+      })
+    })
+    
+    describe('and the server responds with a malformed response', () => {
+      let foundErr, foundRes;
+      beforeAll(() => {
+        //replace the response to a malformed response
+        svr.reset({status: 200, body: {}, headres: {} });
+        return client.get(333)
+          .then(entity => foundRes = entity)
+          .catch(err => foundErr = err)
+      })
+      
+      it('should reject with a friendly error', () => {
+        Should(foundErr).have.property('message').match(/Bad response from backend service/)
+        Should(foundErr).have.property('id', 333);
+        Should(foundErr).have.property('innerError').be.an.Error();
+      })
+    })
+    
+    describe('and the server does not respond at all', () => {
+      let foundErr, foundRes;
+      beforeAll(() => {
+        //replace the response to a malformed response
+        svr.close();
+        return client.get(333)
+          .then(entity => foundRes = entity)
+          .catch(err => foundErr = err)
+      })
+      
+      it('should reject with a friendly error', () => {
+        Should(foundErr).have.property('message').match(/No response from backend service/)
+        Should(foundErr).have.property('id', 333);
+        Should(foundErr).have.property('innerError').be.an.Error();
+      })      
+    })
+  })
+})
+
+
+```
+
+
 ## Specs
 
 ``` 
