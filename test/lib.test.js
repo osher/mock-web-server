@@ -82,8 +82,12 @@ module.exports =
                 .be.an.Array()
                 .have.property('length', 0)
             , ".reset(response) returns the interface and sets the response" : 
-              () => Should(svr.reset({set: true}))
-                .have.property('response', {set: true})
+              (done) => Should(svr.reset({body: {set: true}}))
+                .have.property('response', {body: {set: true}})
+                && request({ url: 'http://localhost:3030/dd', json: true}, (e,r,b) => {
+                    Should(b).eql({set: true});
+                    done()
+                })
             }
           , afterAll: 
             () => svr.close()
