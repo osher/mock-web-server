@@ -1,4 +1,5 @@
 # mock-web-server [![Build Status](https://secure.travis-ci.org/osher/mock-web-server.png?branch=master)](http://travis-ci.org/osher/mock-web-server) [![Coverage Status](https://coveralls.io/repos/github/osher/mock-web-server/badge.svg)](https://coveralls.io/github/osher/mock-web-server)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fosher%2Fmock-web-server.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fosher%2Fmock-web-server?ref=badge_shield)
 A lightweight simple helper utility to mock web-servers
 
 ## Synopsis
@@ -187,3 +188,7 @@ describe('lib/my-web-client', () => {
   33 passing (94ms)
 
 ``` 
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fosher%2Fmock-web-server.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fosher%2Fmock-web-server?ref=badge_large)
