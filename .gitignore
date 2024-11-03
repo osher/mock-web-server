@@ -5,6 +5,7 @@ apps/monitor/web/monitorResults.json
 
 #pacakge manager folder
 node_modules
+package-lock.json
 
 #OS
 .DS_Store

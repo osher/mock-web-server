@@ -92,6 +92,60 @@ module.exports =
           , afterAll: 
             () => svr.close()
           }
+        , "when response object has a preResponse hook" :
+          { beforeAll:
+            next => svr.listen(3030, next), 
+            "and the response hook returns an object with cascading properties" :
+            { beforeAll: 
+              () => svr.reset(
+                { status: 299 //<-- will be taken from response object
+                , headers: { 'x-static': 'true' } //<-- will be overriden
+                , preResponse:
+                  () => ({ headers: { 'x-dynamic': 'true' }, body: { generated: true }})
+                }
+              )
+            , "the server should serve request with the cascaded attributes returned by the hook":
+              { beforeAll:
+                (next) => request({ url: 'http://localhost:3030/', json: true }, (e, r) => {
+                    foundErr = e;
+                    foundRes = r;
+                    next()
+                })
+              , "the provided status code" :
+                () => Should(foundRes).have.property('statusCode', 299)
+              , "the provided headers" :
+                () => Should(foundRes).have.property('headers').have.property('x-dynamic', 'true')
+              , "the provided body" :
+                () => Should(foundRes).have.property('body').eql({ generated: true })
+              }
+            }
+          , "and the response hook mutates current response using `this`" :
+            { beforeAll:
+              () => svr.reset({
+                preResponse: function() {
+                  this.status = 288;
+                  this.headers = { 'x-dynamic': 'very' };
+                  this.body = { gen: 'erated' }
+                }
+              })
+            , "the server should serve request with response mutated by the hook" :
+              { beforeAll:
+                (next) => request({ url: 'http://localhost:3030/', json: true }, (e, r) => {
+                    foundErr = e;
+                    foundRes = r;
+                    next()
+                })
+              , "the provided status code" :
+                () => Should(foundRes).have.property('statusCode', 288)
+              , "the provided headers" :
+                () => Should(foundRes).have.property('headers').have.property('x-dynamic', 'very')
+              , "the provided body" :
+                () => Should(foundRes).have.property('body').eql({ gen: 'erated' })
+              }
+            }
+          , afterAll:
+            () => svr.close()
+          }
         , "closing the server with a callback" : 
           { "should call the callback as well as closing the server" :
             (done) => asyn.waterfall([
